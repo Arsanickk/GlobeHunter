@@ -1,15 +1,22 @@
-/* jshint esversion: 6 */
-/* jshint node: true */
+
 'use strict';
 
-//change ablility to hit check multiple times
+import Papa from 'papaparse';
+const csvString = "us-cities-top-1k.csv";
+Papa.parse(csvString, {
+  download: false,
+  complete: function(parsedData){
+    const us_city_lat = parsedData.data.map(row => row["lat"]);
+    const us_city_lon = parsedData.data.map(row => row["lon"]);
+  }
+});
+
+
 var map;
 var resultmap;
 var markers = [];
 var guess_coordinates = [];
 var true_location = [];
-var us_city_set = [4355843, 5809844, 4164138, 4440906,4894465, 2562501];
-var world_city_set =[4355843, 3599699, 1857910, 4853608, 323786];
 var accumulated_distance = 0;
 var current_name = '';
 var distance_from_guess = [];
@@ -33,7 +40,10 @@ async function initialize() {
   document.getElementById("distance").innerHTML = ' '; 
 
 
-  var number = await Promise.all([getData(`https://api.openweathermap.org/data/2.5/weather?id=${randomLoc()}&APPID=afd29982d6c42c0574df26c5e99d12d0`)]);
+  
+  var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${randomLoc()[0]}&lon=${randomLoc()[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
+  console.log(randomLoc[0])
+  console.log(randomLoc[1])
   true_location = [];
   true_location.push(number[0].coord.lat,number[0].coord.lon);
   current_name = (number[0].name + ", " + number[0].sys.country);
@@ -182,26 +192,6 @@ function check(){
 }
 
 function distance(lat1, lon1, lat2, lon2, unit) {
-	// if ((lat1 == lat2) && (lon1 == lon2)) {
-	// 	return 0;
-	// }
-	// else {
-	// 	var radlat1 = Math.PI * lat1/180;
-	// 	var radlat2 = Math.PI * lat2/180;
-	// 	var theta = lon1-lon2;
-	// 	var radtheta = Math.PI * theta/180;
-	// 	var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-	// 	if (dist > 1) {
-	// 		dist = 1;
-	// 	}
-	// 	dist = Math.acos(dist);
-	// 	dist = dist * 180/Math.PI;
-	// 	dist = dist * 60 * 1.1515;
-	// 	if (unit=="K") { dist = dist * 1.609344 }
-	// 	if (unit=="N") { dist = dist * 0.8684 }
-	// 	return (dist / 1.609).toFixed(1)
-  //   ;
-	// }
   var R = 6371; // Radius of the earth in km
   var dLat = deg2rad(lat2-lat1);  // deg2rad below
   var dLon = deg2rad(lon2-lon1); 
@@ -220,10 +210,13 @@ function deg2rad(deg) {
 }
 
 
-var index = -1;
+var index = 0;
 function randomLoc(){
+    //Generating random lat and long
+    const lat = Math.floor(Math.random() * us_city_lat.length);
+    const lon = Math.floor(Math.random() * us_city_lon.length);
     index += 1
-    if (index > world_city_set.length -1){
+    if (index > 5){
         index = 0
         //console.log(index)
         document.getElementById("totaldistance").innerHTML = 'Round Score: 0 Miles'; 
@@ -233,19 +226,18 @@ function randomLoc(){
             text: "Your Guessing was only off by " + accumulated_distance.toFixed(1) + " Miles This Round!"
         });
         accumulated_distance = 0;
-        document.getElementById('round').innerHTML = "Round:  1/" + world_city_set.length
+        document.getElementById('round').innerHTML = "Round:  1/" + 5
         document.getElementById("next").innerHTML= "Next Location";
-        return[world_city_set[0]]
+        return[us_city_lat[lat], us_city_lon[lon]]
 
-    }else if(index == world_city_set.length -1){
+    }else if(index == 5){
         document.getElementById("next").innerHTML= "Finish Round";
-        document.getElementById('round').innerHTML = "Round: " + (index + 1) + "/" + world_city_set.length
-        return[world_city_set[index]]
+        document.getElementById('round').innerHTML = "Round: " + (index + 1) + "/" + 5
+        return[us_city_lat[lat], us_city_lon[lon]]
     }else{
-        //console.log(index);
         document.getElementById("next").innerHTML= "Next Location";
-        document.getElementById('round').innerHTML = "Round: " + (index + 1) + "/" + world_city_set.length
-        return[world_city_set[index]]
+        document.getElementById('round').innerHTML = "Round: " + (index + 1) + "/" + 5
+        return[us_city_lat[lat], us_city_lon[lon]]
     }
    
 }
