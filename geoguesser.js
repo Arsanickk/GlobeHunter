@@ -2,37 +2,9 @@
 'use strict';
 
 
-//Parsing csv file
-// const fileInput = document.getElementById('us-cities-top-1k.csv');
 
-// fileInput.addEventListener('change', handleFileSelect, false);
-
-// function handleFileSelect(event) {
-//   const file = event.target.files[0];
-//   const reader = new FileReader();
-
-//   reader.onload = function (event) {
-//     const csvData = event.target.result;
-//     const lines = csvData.trim().split('\n');
-//     const lats = [];
-//     const lons = [];
-
-//     for (let i = 1; i < lines.length; i++) {
-//       const values = lines[i].split(',');
-
-//       const lat = parseFloat(values[3]);
-//       const lon = parseFloat(values[4]);
-
-//       lats.push(lat);
-//       lons.push(lon);
-//     }
-//   };
-
-//   reader.readAsText(file);  
-// }
-
-    const lats = [33.7825194];
-    const lons = [-117.22864779999999];
+    // const lats = [33.7825194];
+    // const lons = [-117.22864779999999];
 
 
 var map;
@@ -44,6 +16,105 @@ var accumulated_distance = 0;
 var current_name = '';
 var distance_from_guess = [];
 var check_count = 0;
+var lat_lon = [[]]
+
+
+//parsing json file
+
+
+async function initialize() {
+  const filePath = './cool_files/uscities1k.json';
+
+  try {
+    const response = await fetch(filePath);
+    const jsonData = await response.json();
+    const lat_lon = jsonData.map(city => [city.lat, city.lon]);
+    // Call a function or execute code that relies on latLonArray here
+
+    check_count = 0;
+    disableButton('check');
+    disableButton('next');
+    if(accumulated_distance == 0){
+      document.getElementById("totaldistance").innerHTML = 'Round Score: 0 Miles'; 
+    }
+    document.getElementById("location").innerHTML = ' ';
+    document.getElementById("distance").innerHTML = ' '; 
+
+
+    var randlat_lon = randomLoc(lat_lon);
+    console.log(randlat_lon);
+    console.log(lat_lon.length);
+
+    var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${randlat_lon[0]}&lon=${randlat_lon[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
+    console.log(number);
+    true_location = [];
+    true_location.push(randlat_lon[0],randlat_lon[1]);
+    current_name = (number[0][0].name + ", " + number[0][0].state);
+    console.log(current_name);  
+        
+    
+    // var mapCenter = {lat: 37.98617112182952, lng: 23.728172621208437}; // Center of world
+    var mapCenter = {lat: 37.01617112182952, lng: -95.728172621208437}; // center of US
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      center: mapCenter,
+      zoom: 3,
+      streetViewControl: false,
+    });
+
+    var rmap = new google.maps.Map(document.getElementById('result'), {
+        center: mapCenter,
+        zoom: 2,
+        streetViewControl: false,
+        zoomControl: true,
+        zoomControlOptions: {
+            position: google.maps.ControlPosition.LEFT_CENTER
+    },
+      });
+
+      
+      google.maps.event.addListener(map, 'click', function(event) {
+          placeMarker(event.latLng);
+          if (check_count == 0){
+            enableButton('check');
+            check_count += 1;
+          }
+      });
+      
+      function placeMarker(location) {
+          deleteMarkers();
+          guess_coordinates = [];
+          var marker = new google.maps.Marker({
+              position: location, 
+              map: map,
+          });
+          markers.push(marker);
+          guess_coordinates.push(marker.getPosition().lat(),marker.getPosition().lng());
+          }
+
+      
+      var panorama = new google.maps.StreetViewPanorama(
+          document.getElementById('pano'), {
+            position: {lat: randlat_lon[0], lng: randlat_lon[1]},
+            pov: {
+              heading: 34,
+              pitch: 10
+            },
+            addressControl: false
+          });
+      map.setStreetView(panorama);
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+  // Rest of your code here...
+}
+
+
+ 
+
+
 
 
 async function getData(url) {
@@ -52,78 +123,6 @@ async function getData(url) {
       .catch(error => console.log(error));
 }
 
-async function initialize() {
-  check_count = 0;
-  disableButton('check');
-  disableButton('next');
-  if(accumulated_distance == 0){
-    document.getElementById("totaldistance").innerHTML = 'Round Score: 0 Miles'; 
-  }
-  document.getElementById("location").innerHTML = ' ';
-  document.getElementById("distance").innerHTML = ' '; 
-
-
-  var randomLat = randomLoc()[0]
-  var randomLon = randomLoc()[1]
-  var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${randomLat}&lon=${randomLon}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
-  console.log(number);
-  true_location = [];
-  true_location.push(randomLat,randomLon);
-  current_name = (number[0][0].name + ", " + number[0][0].state);
-  console.log(current_name);  
-      
-  
-  var mapCenter = {lat: 37.98617112182952, lng: 23.728172621208437};
-
-  var map = new google.maps.Map(document.getElementById('map'), {
-    center: mapCenter,
-    zoom: 1,
-    streetViewControl: false,
-  });
-
-  var rmap = new google.maps.Map(document.getElementById('result'), {
-      center: mapCenter,
-      zoom: 2,
-      streetViewControl: false,
-      zoomControl: true,
-      zoomControlOptions: {
-          position: google.maps.ControlPosition.LEFT_CENTER
-  },
-    });
-
-    
-    google.maps.event.addListener(map, 'click', function(event) {
-        placeMarker(event.latLng);
-        if (check_count == 0){
-          enableButton('check');
-          check_count += 1;
-        }
-     });
-     
-     function placeMarker(location) {
-         deleteMarkers();
-         guess_coordinates = [];
-         var marker = new google.maps.Marker({
-             position: location, 
-             map: map,
-         });
-         markers.push(marker);
-         guess_coordinates.push(marker.getPosition().lat(),marker.getPosition().lng());
-        }
-
-    
-    var panorama = new google.maps.StreetViewPanorama(
-        document.getElementById('pano'), {
-          position: {lat: randomLat, lng: randomLon},
-          pov: {
-            heading: 34,
-            pitch: 10
-          },
-          addressControl: false
-        });
-    map.setStreetView(panorama);
-  
-}
 
   function setMapOnAll(map) {
     for (var i = 0; i < markers.length; i++) {
@@ -235,14 +234,14 @@ function deg2rad(deg) {
 
 
 var index = 0;
-function randomLoc(){
+function randomLoc(lat_lon){
     //Generating random lat and long
-    const ran_lat = Math.floor(Math.random() * lats.length);
-    const ran_lon = Math.floor(Math.random() * lons.length);
+
+    const rand_num = Math.floor(Math.random() * 1000); 
+    
     index += 1
     if (index > 5){
         index = 0
-        //console.log(index)
         document.getElementById("totaldistance").innerHTML = 'Round Score: 0 Miles'; 
         swal({
             title: "Thanks For playing!",
@@ -252,16 +251,16 @@ function randomLoc(){
         accumulated_distance = 0;
         document.getElementById('round').innerHTML = "Round:  1/" + 5
         document.getElementById("next").innerHTML= "Next Location";
-        return[lats[ran_lat], lons[ran_lon]]
+        return lat_lon[rand_num]
 
     }else if(index == 5){
         document.getElementById("next").innerHTML= "Finish Round";
-        document.getElementById('round').innerHTML = "Round: " + (index + 1) + "/" + 5
-        return[lats[ran_lat], lons[ran_lon]]
+        document.getElementById('round').innerHTML = "Round: " + (index) + "/" + 5
+        return lat_lon[rand_num]
     }else{
         document.getElementById("next").innerHTML= "Next Location";
-        document.getElementById('round').innerHTML = "Round: " + (index + 1) + "/" + 5
-        return[lats[ran_lat], lons[ran_lon]]
+        document.getElementById('round').innerHTML = "Round: " + (index) + "/" + 5
+        return lat_lon[rand_num]
     }
    
 }
