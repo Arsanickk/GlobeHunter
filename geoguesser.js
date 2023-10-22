@@ -45,7 +45,7 @@ async function initialize() {
     console.log(randlat_lon);
     console.log(lat_lon.length);
 
-    var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${randlat_lon[0]}&lon=${randlat_lon[1]}&limit=1&appid=APIKEY`)]);
+    var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${randlat_lon[0]}&lon=${randlat_lon[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
     console.log(number);
     true_location = [];
     true_location.push(randlat_lon[0],randlat_lon[1]);
