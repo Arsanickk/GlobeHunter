@@ -43,7 +43,7 @@ html, body {
 #location, #distance, #totaldistance{
     font-size: 20px;
     text-align: center;
-    font-family: Chalkduster, fantasy;
+    font-family: monospace;
 }
 
 #location, #distance {
@@ -66,7 +66,7 @@ html, body {
 
 h1{
   text-align: center;
-  font-family: Chalkduster, fantasy;
+  font-family: monospace;
 }
 
 #next{
@@ -84,7 +84,7 @@ h1{
 }
 
 #round {
-  font-family: Chalkduster, fantasy;
+  font-family: monospace;
   font-size: 15px;
 }
 

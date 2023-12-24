@@ -1,4 +1,3 @@
-
 'use strict';
 
 
@@ -16,20 +15,16 @@ var accumulated_distance = 0;
 var current_name = '';
 var distance_from_guess = [];
 var check_count = 0;
-var lat_lon = [[]]
+var lat_lng = [[]]
 
 
 //parsing json file
 
 
 async function initialize() {
-  const filePath = './cool_files/uscities1k.json';
 
   try {
-    const response = await fetch(filePath);
-    const jsonData = await response.json();
-    const lat_lon = jsonData.map(city => [city.lat, city.lon]);
-    // Call a function or execute code that relies on latLonArray here
+
 
     check_count = 0;
     disableButton('check');
@@ -41,24 +36,28 @@ async function initialize() {
     document.getElementById("distance").innerHTML = ' '; 
 
 
-    var randlat_lon = randomLoc(lat_lon);
-    console.log(randlat_lon);
-    console.log(lat_lon.length);
-
-    var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${randlat_lon[0]}&lon=${randlat_lon[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
-    console.log(number);
-    true_location = [];
-    true_location.push(randlat_lon[0],randlat_lon[1]);
+    // var randlat_lng = randomLoc(lat_lng);
+    // console.log(randlat_lng);
+    // console.log(lat_lng.length);
+    //console.log(nearestSV(randlat_lng[0], randlat_lng[1]));
+    executeRound();
+    const coords = await getLand();
+    var SVcoords = await nearestSV(coords[0], coords[1]);
+    console.log(SVcoords);
+    var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${SVcoords[0]}&lon=${SVcoords[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
+    true_location = [SVcoords[0], SVcoords[1]];
+    console.log(true_location);
     current_name = (number[0][0].name + ", " + number[0][0].state);
-    console.log(current_name);  
+
+ 
         
     
-    // var mapCenter = {lat: 37.98617112182952, lng: 23.728172621208437}; // Center of world
-    var mapCenter = {lat: 37.01617112182952, lng: -95.728172621208437}; // center of US
+   var mapCenter = {lat: 37.98617112182952, lng: 23.728172621208437}; // Center of world
+   //var mapCenter = {lat: 37.01617112182952, lng: -95.728172621208437}; // center of US
 
     var map = new google.maps.Map(document.getElementById('map'), {
       center: mapCenter,
-      zoom: 3,
+      zoom: 1,
       streetViewControl: false,
     });
 
@@ -69,8 +68,8 @@ async function initialize() {
         zoomControl: true,
         zoomControlOptions: {
             position: google.maps.ControlPosition.LEFT_CENTER
-    },
-      });
+        },
+    });
 
       
       google.maps.event.addListener(map, 'click', function(event) {
@@ -95,7 +94,7 @@ async function initialize() {
       
       var panorama = new google.maps.StreetViewPanorama(
           document.getElementById('pano'), {
-            position: {lat: randlat_lon[0], lng: randlat_lon[1]},
+            position: {lat: SVcoords[0], lng: SVcoords[1]},
             pov: {
               heading: 34,
               pitch: 10
@@ -108,7 +107,6 @@ async function initialize() {
       console.error('Error:', error);
     }
 
-  // Rest of your code here...
 }
 
 
@@ -143,6 +141,59 @@ async function getData(url) {
     markers = [];
   }
 
+async function getLand() {
+    try {
+        const url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.3geonames.org/randomland.json')
+  
+        const response = await fetch(url);
+
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Parse the response to JSON
+        const data = await response.json();
+
+        // Extract the latitude and longitude
+        const landcoord = [data.nearest.latt, data.nearest.longt];
+        
+        console.log('Nearest Land Coordinates: ', landcoord);
+
+        return landcoord;
+    } catch (error) {
+        console.log('Error:', error);
+    }
+}
+
+function nearestSV(lat, lng) {
+  return new Promise((resolve, reject) => {
+    // Initialize the Google Street View Service
+    var streetViewService = new google.maps.StreetViewService();
+    var STREETVIEW_MAX_DISTANCE = 500000; // Max distance in Meters
+
+    // Create a new LatLng using the provided lat and lng
+    var myLocation = new google.maps.LatLng(lat, lng);
+
+    // Get the nearest street view image within the defined search radius
+    streetViewService.getPanoramaByLocation(myLocation, STREETVIEW_MAX_DISTANCE, function(streetViewPanoramaData, status) {
+        if (status === google.maps.StreetViewStatus.OK) {
+            // If a street view image was found, return the location
+            var location = streetViewPanoramaData.location.latLng;
+            console.log('Street View Land Location: ', location.toString());
+            resolve([location.lat(), location.lng()]);
+        } else {
+            // No street view image was found within the given radius
+            console.log('No Street View image found within ' + STREETVIEW_MAX_DISTANCE/1000 + ' km of this location');
+            reject('No Street View image found');
+        }
+    });
+  });
+}
+
+
+
+
 function check(){
 
     enableButton('next');
@@ -157,6 +208,7 @@ function check(){
     console.log("current guess error: " + guess_error);
     console.log("total guess error: " + accumulated_distance);
    
+    //console.log(true_location);
     var true_coords = {lat: true_location[0], lng: true_location[1]};
     var guess_coords = {lat: guess_coordinates[0], lng: guess_coordinates[1]};
     var result_map = new google.maps.Map(document.getElementById('result'), {
@@ -234,10 +286,10 @@ function deg2rad(deg) {
 
 
 var index = 0;
-function randomLoc(lat_lon){
-    //Generating random lat and long
+function executeRound(lat_lng){
 
-    const rand_num = Math.floor(Math.random() * 1000); 
+
+
     
     index += 1
     if (index > 5){
@@ -251,16 +303,16 @@ function randomLoc(lat_lon){
         accumulated_distance = 0;
         document.getElementById('round').innerHTML = "Round:  1/" + 5
         document.getElementById("next").innerHTML= "Next Location";
-        return lat_lon[rand_num]
+
 
     }else if(index == 5){
         document.getElementById("next").innerHTML= "Finish Round";
         document.getElementById('round').innerHTML = "Round: " + (index) + "/" + 5
-        return lat_lon[rand_num]
+
     }else{
         document.getElementById("next").innerHTML= "Next Location";
         document.getElementById('round').innerHTML = "Round: " + (index) + "/" + 5
-        return lat_lon[rand_num]
+
     }
    
 }
