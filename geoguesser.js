@@ -11,7 +11,8 @@ var resultmap;
 var markers = [];
 var guess_coordinates = [];
 var true_location = [];
-var accumulated_distance = 0;
+var score = 0;
+var curscore = 0
 var current_name = '';
 var distance_from_guess = [];
 var check_count = 0;
@@ -29,8 +30,8 @@ async function initialize() {
     check_count = 0;
     disableButton('guess');
     disableButton('next');
-    if(accumulated_distance == 0){
-      document.getElementById("totaldistance").innerHTML = 'Score: 0 Miles'; 
+    if(score == 0){
+      document.getElementById("totaldistance").innerHTML = 'Score: 0'; 
     }
     document.getElementById("location").innerHTML = ' ';
     document.getElementById("distance").innerHTML = ' '; 
@@ -199,14 +200,15 @@ function check(){
     enableButton('next');
     distance_from_guess = [];
     var guess_error = (distance(guess_coordinates[0],guess_coordinates[1],true_location[0], true_location[1],'K'));
-    accumulated_distance += parseFloat(guess_error);
+    curscore = calculateScore(parseFloat(guess_error));
+    score += curscore;
     distance_from_guess = guess_error;
 
     
     console.log("Guessed Location: " + guess_coordinates);
     console.log("Actual Location: " + true_location);
     console.log("current guess error: " + guess_error);
-    console.log("total guess error: " + accumulated_distance);
+    console.log("total guess error: " + score);
    
     //console.log(true_location);
     var true_coords = {lat: true_location[0], lng: true_location[1]};
@@ -264,6 +266,7 @@ function check(){
   flightPath.setMap(result_map);
   display_location();
   disableButton('guess');
+  disableButton('mapButton');
 }
 
 function distance(lat1, lon1, lat2, lon2, unit) {
@@ -290,23 +293,23 @@ function executeRound(lat_lng){
 
 
 
-    
+    enableButton('mapButton');
     index += 1
     if (index > 5){
         index = 0
-        document.getElementById("totaldistance").innerHTML = 'Round Score: 0 Miles'; 
+        document.getElementById("totaldistance").innerHTML = 'Round Score: 0'; 
         swal({
-            title: "Thanks For playing!",
+            title: "Congratulations!",
             icon: "success",
-            text: "Your Guessing was only off by " + accumulated_distance.toFixed(1) + " Miles This Round!"
+            text: "You Scored a Total of " + score.toFixed(1) + " Points!"
         });
-        accumulated_distance = 0;
+        score = 0;
         document.getElementById('round').innerHTML = "Round:  1/" + 5
         document.getElementById("next").innerHTML= "Next Location";
 
 
     }else if(index == 5){
-        document.getElementById("next").innerHTML= "Finish Round";
+        document.getElementById("next").innerHTML= "Finish Game";
         document.getElementById('round').innerHTML = "Round: " + (index) + "/" + 5
 
     }else{
@@ -319,8 +322,9 @@ function executeRound(lat_lng){
 
 function display_location(){
     document.getElementById("location").innerHTML = "Correct Location: " + current_name;
-    document.getElementById("distance").innerHTML = "Your Guess was " + distance_from_guess + " Miles away";
-    document.getElementById("totaldistance").innerHTML = "Score: " + accumulated_distance.toFixed(1) + " Miles";
+    document.getElementById("distance").innerHTML = "Your Guess was " + distance_from_guess.toFixed(1) + " Miles away";
+    document.getElementById("totaldistance").innerHTML = "Score: " + score.toFixed(0);
+    document.getElementById("score").innerHTML = "You scored: " + curscore.toFixed(0) + " Points";
 }
 
 function disableButton(id){
@@ -329,6 +333,10 @@ function disableButton(id){
 
 function enableButton(id){
   document.getElementById(id).disabled = false;
+}
+
+function calculateScore(x) {
+  return 5000 * Math.exp(-x / 2000);
 }
 
 

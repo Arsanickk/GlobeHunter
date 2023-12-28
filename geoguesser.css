@@ -44,7 +44,8 @@ html, body {
 
 #result{
   top: 20%;
-  left: 0%;
+  left: 50%;
+  transform: translateX(-50%);
   position: fixed;
   height: 400px;
   width: 600px;
@@ -55,18 +56,48 @@ html, body {
   display: none;
 }
 
-#location, #distance, #totaldistance{
-    position: fixed;
-    z-index: 2;
-    font-size: 20px;
-    text-align: center;
-    font-family: monospace;
+#location{
+  background-color: rgb(52,58,64);
+  color:white;
+  top: 75%;
+  left: 50%;
+  width: 75%;
+  transform: translateX(-50%);
+  position: fixed;
+  z-index: 2;
+  font-size: 20px;
+  text-align: center;
+  font-family: monospace;
 }
 
-#location, #distance {
-  display: inline-block;
-  margin-left: 20px;
+#distance{
+  background-color: rgb(52,58,64);
+  color:white;
+  width: 75%;
+  top: 80%;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+  z-index: 2;
+  font-size: 20px;
+  text-align: center;
+  font-family: monospace;
 }
+
+#score{
+  background-color: rgb(52,58,64);
+  color:white;
+  width: 75%;
+  top: 85%;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+  z-index: 2;
+  font-size: 20px;
+  text-align: center;
+  font-family: monospace;
+}
+
 
 
 #guess{
@@ -77,10 +108,12 @@ html, body {
   left: 0;
   z-index: 3;
 }
+
 #next{
   top: 20%;
-  left: 0%;
-  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
   /* transform: translate(100px, -48px); */
   width: 600px;
   z-index: 3;
@@ -91,6 +124,7 @@ html, body {
 
 h1{
   left: 50%;
+  top: 10px;
   transform: translateX(-50%);
   position: fixed;
   text-align: center;
@@ -110,17 +144,32 @@ h1{
 }
 
 #totaldistance{
+  font-size: 30px;
+  text-align: center;
+  font-family: monospace;
   position: fixed;
+  top: 10px;
+  right: 0px;
+  transform: translateX(-50%);
+  color: black;
   text-shadow: 0 0 10px rgb(255, 255, 255);
-  bottom: 0;
-  width: 100%;
+  z-index: 2;
 
 }
 
+
+
 #round {
-  position: fixed;
+  font-size: 30px;
+  text-align: center;
   font-family: monospace;
-  font-size: 15px;
+  position: fixed;
+  top: 10px;
+  left: 100px;
+  transform: translateX(-50%);
+  color: black;
+  text-shadow: 0 0 10px rgb(255, 255, 255);
+  z-index: 2;
 
 }
 

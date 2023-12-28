@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Title</title>
+    <title>GlobeHunter</title>
     <link rel="stylesheet" href="geoguesser.css" type="text/css">
   </head>
   <h1> GlobeHunter</h1>
@@ -17,16 +17,12 @@
       <button id = "guess" type="button" class="btn btn-primary btn-lg btn btn-dark" onclick = check() >Guess!</button>
       <button id = "next" type="button" class="btn btn-primary btn-lg btn btn-dark" onclick = initialize()>Next Location</button>
 
-      <div class = 'container' id="result"></div>
+      <div id="result"></div>
+      <p id="location" ></p>
+      <p id="distance"></p>
+      <p id="score"></p>
+      <div id="totaldistance"></div>
 
-      <div id = 'center' class="container">
-          <div id="location"></div>
-          <div id="distance"></div>
-      </div>
-  
-      <div id = 'info'>
-        <footer id="totaldistance"></footer>
-      </div>
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -64,11 +60,14 @@
         var map = document.getElementById("map");
         var guess = document.getElementById("guess");  
         var next = document.getElementById("next");   
+        var points = document.getElementById("score");
         
         next.style.display = "block";
         
         resultMap.style.display = "block";
         resultMap.style.zIndex = "2";
+
+        points.style.display = "block";
 
         map.style.display = "none";
         map.style.zIndex = "1";
@@ -81,7 +80,7 @@
         var resultMap = document.getElementById("result");
         var map = document.getElementById("map");
         var guess = document.getElementById("guess");  
-        
+        var points = document.getElementById("score");
         var next = document.getElementById("next");   
         
         next.style.display = "none";
@@ -96,6 +95,8 @@
 
         guess.style.display = "none";
         guess.style.zIndex = "2";
+
+        points.style.display = "none";
       });
 
 
