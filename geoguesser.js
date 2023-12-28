@@ -45,7 +45,7 @@ async function initialize() {
     const coords = await getLand();
     var SVcoords = await nearestSV(coords[0], coords[1]);
     console.log(SVcoords);
-    var number = await Promise.all([getData(`http://api.openweathermap.org/geo/1.0/reverse?lat=${SVcoords[0]}&lon=${SVcoords[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
+    var number = await Promise.all([getData(`https://corsproxy.io/?http://api.openweathermap.org/geo/1.0/reverse?lat=${SVcoords[0]}&lon=${SVcoords[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
     true_location = [SVcoords[0], SVcoords[1]];
     console.log(true_location);
     current_name = (number[0][0].name + ", " + number[0][0].state);
