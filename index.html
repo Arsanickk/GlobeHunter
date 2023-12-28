@@ -11,13 +11,12 @@
 
       <div id="map"></div>
       <div id="pano"></div>
-      
-      <div id = 'buttons' class="container" >
-          <div >
-              <button type="button" class="btn btn-primary btn-lg btn btn-dark" onclick = check() id="check">Guess!</button>
-              <button type="button" class="btn btn-primary btn-lg btn btn-dark" onclick = initialize() id="next">Next Location</button>
-          </div>
-      </div>
+      <button id="mapButton" type="button" class="btn btn-primary btn-lg btn btn-dark">Map</button>
+
+  
+      <button id = "guess" type="button" class="btn btn-primary btn-lg btn btn-dark" onclick = check() >Guess!</button>
+      <button id = "next" type="button" class="btn btn-primary btn-lg btn btn-dark" onclick = initialize()>Next Location</button>
+
       <div class = 'container' id="result"></div>
 
       <div id = 'center' class="container">
@@ -26,7 +25,7 @@
       </div>
   
       <div id = 'info'>
-      <footer id="totaldistance"></footer>
+        <footer id="totaldistance"></footer>
       </div>
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -37,6 +36,72 @@
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsR_Nn7SAs8weVochOd_sf0o_sNBtjja4&callback=initialize">
     </script>
     
+    <script>
+      document.getElementById("mapButton").addEventListener("click", function() {
+        var map = document.getElementById("map");
+        var guess = document.getElementById("guess");
+        
+        // If the map is currently displayed, hide it. Otherwise, show it.
+        if (map.style.display === "block") {
+          // Hide the map and reset its z-index
+          map.style.display = "none";
+          map.style.zIndex = "1";
 
+          guess.style.display = "none";
+          guess.style.zIndex = "1";
+        } else {
+          // Show the map and increase its z-index so it appears above the panorama
+          map.style.display = "block";
+          map.style.zIndex = "2";
+
+          guess.style.display = "block";
+          guess.style.zIndex = "2";
+        }
+      });
+
+      document.getElementById("guess").addEventListener("click", function() {
+        var resultMap = document.getElementById("result");
+        var map = document.getElementById("map");
+        var guess = document.getElementById("guess");  
+        var next = document.getElementById("next");   
+        
+        next.style.display = "block";
+        
+        resultMap.style.display = "block";
+        resultMap.style.zIndex = "2";
+
+        map.style.display = "none";
+        map.style.zIndex = "1";
+
+        guess.style.display = "none";
+        guess.style.zIndex = "1";
+      });
+
+      document.getElementById("next").addEventListener("click", function() {
+        var resultMap = document.getElementById("result");
+        var map = document.getElementById("map");
+        var guess = document.getElementById("guess");  
+        
+        var next = document.getElementById("next");   
+        
+        next.style.display = "none";
+        
+        // Hide the result map and reset its z-index
+        resultMap.style.display = "none";
+        resultMap.style.zIndex = "0";
+
+
+        map.style.display = "none";
+        map.style.zIndex = "2";
+
+        guess.style.display = "none";
+        guess.style.zIndex = "2";
+      });
+
+
+
+
+    </script>
   </body>
+
 </html>

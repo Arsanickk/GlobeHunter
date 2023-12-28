@@ -27,10 +27,10 @@ async function initialize() {
 
 
     check_count = 0;
-    disableButton('check');
+    disableButton('guess');
     disableButton('next');
     if(accumulated_distance == 0){
-      document.getElementById("totaldistance").innerHTML = 'Round Score: 0 Miles'; 
+      document.getElementById("totaldistance").innerHTML = 'Score: 0 Miles'; 
     }
     document.getElementById("location").innerHTML = ' ';
     document.getElementById("distance").innerHTML = ' '; 
@@ -75,7 +75,7 @@ async function initialize() {
       google.maps.event.addListener(map, 'click', function(event) {
           placeMarker(event.latLng);
           if (check_count == 0){
-            enableButton('check');
+            enableButton('guess');
             check_count += 1;
           }
       });
@@ -170,7 +170,7 @@ function nearestSV(lat, lng) {
   return new Promise((resolve, reject) => {
     // Initialize the Google Street View Service
     var streetViewService = new google.maps.StreetViewService();
-    var STREETVIEW_MAX_DISTANCE = 500000; // Max distance in Meters
+    var STREETVIEW_MAX_DISTANCE = 5000000; // Max distance in Meters
 
     // Create a new LatLng using the provided lat and lng
     var myLocation = new google.maps.LatLng(lat, lng);
@@ -263,7 +263,7 @@ function check(){
 
   flightPath.setMap(result_map);
   display_location();
-  disableButton('check');
+  disableButton('guess');
 }
 
 function distance(lat1, lon1, lat2, lon2, unit) {
@@ -320,7 +320,7 @@ function executeRound(lat_lng){
 function display_location(){
     document.getElementById("location").innerHTML = "Correct Location: " + current_name;
     document.getElementById("distance").innerHTML = "Your Guess was " + distance_from_guess + " Miles away";
-   document.getElementById("totaldistance").innerHTML = "Round Score: " + accumulated_distance.toFixed(1) + " Miles";
+    document.getElementById("totaldistance").innerHTML = "Score: " + accumulated_distance.toFixed(1) + " Miles";
 }
 
 function disableButton(id){

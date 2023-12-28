@@ -1,46 +1,63 @@
 html, body {
+  
   height: 100%;
   width: 100%;
-  max-width: 1000px;
-  min-width: 550px;
   margin:0 auto;
   
 }
 
-#map, #pano{
+#map {
   border-style: solid;
   border-width: 1px;
+  position: fixed;
+  transform: translateY(-300px);
+  bottom: -100%;
+
+  /* position: fixed;
+  bottom: 0%; */
+  z-index: 2;
+  /* set the width and height of the map as per your needs */
+  width: 500px;
+  height: 300px;
+  display: none; /* initially the map is hidden */
 }
 
-#map {
-  float: left;
-  height: 40%;
-  width: 50%;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-right-width: .5px;
-
-}
 
 #pano {
-  float: left;
-  height: 40%;
-  width: 50%;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border-left-width: 0px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 0;
+  z-index: 1;
+}
+
+#mapButton {
+  position: fixed; /* or absolute, depending on your needs */
+  z-index: 3;
+  bottom: 0;
+  left: 0;
+  /* any other styles you want for your button */
 }
 
 
 #result{
-  height: 25%;
-  width: 90%;
+  top: 20%;
+  left: 0%;
+  position: fixed;
+  height: 400px;
+  width: 600px;
   border-radius: 0px;
   border-style: solid;
   border-width: 1px;
+  z-index: 0;
+  display: none;
 }
 
 #location, #distance, #totaldistance{
+    position: fixed;
+    z-index: 2;
     font-size: 20px;
     text-align: center;
     font-family: monospace;
@@ -52,26 +69,40 @@ html, body {
 }
 
 
-#check, #next{
-  font-size: 15px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  border-radius: 0px;
-  width: 200px;
+#guess{
+  display: none;
+  position: fixed;
+  bottom: 299px; 
+  width: 500px;
+  left: 0;
+  z-index: 3;
+}
+#next{
+  top: 20%;
+  left: 0%;
+  position: absolute;
+  /* transform: translate(100px, -48px); */
+  width: 600px;
+  z-index: 3;
+  display: none;
 }
 
-#buttons, #info{
-  text-align: center;
-}
+
 
 h1{
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
   text-align: center;
+  z-index: 2;
   font-family: monospace;
+  text-shadow: 0 0 10px rgb(255, 255, 255);
+  
 }
 
-#next{
+/* #next{
   margin-left: 100px;
-}
+} */
 
 
 #center{
@@ -79,12 +110,17 @@ h1{
 }
 
 #totaldistance{
+  position: fixed;
+  text-shadow: 0 0 10px rgb(255, 255, 255);
   bottom: 0;
   width: 100%;
+
 }
 
 #round {
+  position: fixed;
   font-family: monospace;
   font-size: 15px;
+
 }
 
