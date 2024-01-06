@@ -37,16 +37,16 @@
         var map = document.getElementById("map");
         var guess = document.getElementById("guess");
         
-        // If the map is currently displayed, hide it. Otherwise, show it.
+       
         if (map.style.display === "block") {
-          // Hide the map and reset its z-index
+     
           map.style.display = "none";
           map.style.zIndex = "1";
 
           guess.style.display = "none";
           guess.style.zIndex = "1";
         } else {
-          // Show the map and increase its z-index so it appears above the panorama
+     
           map.style.display = "block";
           map.style.zIndex = "2";
 
@@ -85,7 +85,7 @@
         
         next.style.display = "none";
         
-        // Hide the result map and reset its z-index
+      
         resultMap.style.display = "none";
         resultMap.style.zIndex = "0";
 

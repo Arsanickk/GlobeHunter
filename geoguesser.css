@@ -16,10 +16,10 @@ html, body {
   /* position: fixed;
   bottom: 0%; */
   z-index: 2;
-  /* set the width and height of the map as per your needs */
+  
   width: 500px;
   height: 300px;
-  display: none; /* initially the map is hidden */
+  display: none;
 }
 
 
@@ -34,11 +34,11 @@ html, body {
 }
 
 #mapButton {
-  position: fixed; /* or absolute, depending on your needs */
+  position: fixed; 
   z-index: 3;
   bottom: 0;
   left: 0;
-  /* any other styles you want for your button */
+ 
 }
 
 

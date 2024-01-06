@@ -152,17 +152,17 @@ async function getLand() {
   
         let response = await fetch(url);
 
-        // Check if the request was successful
+
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Parse the response to JSON
+
         let data = await response.json();
 
         console.log('Original random land coords:', [data.nearest.latt, data.nearest.longt]);
 
-        // Extract the latitude and longitude
+
         const state = data.nearest.state;
 
         //===================================== Second cycle now with randomly generated state ===========================================//
@@ -171,12 +171,12 @@ async function getLand() {
 
         response = await fetch(url);
 
-        // Check if the request was successful
+   
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Parse the response to JSON
+   
         data = await response.json();
 
         const landinfo = [data.major.latt, data.major.longt, data.major.city, data.major.prov];
@@ -191,14 +191,14 @@ async function getLand() {
 
 function nearestSV(lat, lng) {
   return new Promise((resolve, reject) => {
-    // Initialize the Google Street View Service
+
     var streetViewService = new google.maps.StreetViewService();
     var STREETVIEW_MAX_DISTANCE = 5000000; // Max distance in Meters
 
-    // Create a new LatLng using the provided lat and lng
+
     var myLocation = new google.maps.LatLng(lat, lng);
 
-    // Get the nearest street view image within the defined search radius
+
     streetViewService.getPanoramaByLocation(myLocation, STREETVIEW_MAX_DISTANCE, function(streetViewPanoramaData, status) {
         if (status === google.maps.StreetViewStatus.OK) {
             // If a street view image was found, return the location
