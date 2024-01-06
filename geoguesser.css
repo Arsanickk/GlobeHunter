@@ -103,19 +103,19 @@ html, body {
 #guess{
   display: none;
   position: fixed;
-  bottom: 299px; 
-  width: 500px;
-  left: 0;
+  bottom: 320px; 
+  width: 200px;
+  left: 150px;
   z-index: 3;
 }
 
 #next{
-  top: 20%;
+  top: 10%;
   left: 50%;
   transform: translateX(-50%);
   position: fixed;
   /* transform: translate(100px, -48px); */
-  width: 600px;
+  width: 200px;
   z-index: 3;
   display: none;
 }

@@ -42,10 +42,14 @@ async function initialize() {
     // console.log(lat_lng.length);
     //console.log(nearestSV(randlat_lng[0], randlat_lng[1]));
     executeRound();
-    const coords = await getLand();
-    var SVcoords = await nearestSV(coords[0], coords[1]);
-    console.log(SVcoords);
-    var number = await Promise.all([getData(`https://api.openweathermap.org/geo/1.0/reverse?lat=${SVcoords[0]}&lon=${SVcoords[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
+    do{
+
+      const coords = await getLand();
+      var SVcoords = await nearestSV(coords[0], coords[1]);
+      console.log(SVcoords);
+      var number = await Promise.all([getData(`https://api.openweathermap.org/geo/1.0/reverse?lat=${SVcoords[0]}&lon=${SVcoords[1]}&limit=1&appid=afd29982d6c42c0574df26c5e99d12d0`)]);
+
+    }while(number.length == 0);
     true_location = [SVcoords[0], SVcoords[1]];
     console.log(true_location);
     current_name = (number[0][0].name + ", " + number[0][0].state);
@@ -144,9 +148,9 @@ async function getData(url) {
 
 async function getLand() {
     try {
-        const url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.3geonames.org/randomland.json')
+        let url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.3geonames.org/randomland.json')
   
-        const response = await fetch(url);
+        let response = await fetch(url);
 
         // Check if the request was successful
         if (!response.ok) {
@@ -154,14 +158,32 @@ async function getLand() {
         }
 
         // Parse the response to JSON
-        const data = await response.json();
+        let data = await response.json();
+
+        console.log('Original random land coords:', [data.nearest.latt, data.nearest.longt]);
 
         // Extract the latitude and longitude
-        const landcoord = [data.nearest.latt, data.nearest.longt];
-        
-        console.log('Nearest Land Coordinates: ', landcoord);
+        const state = data.nearest.state;
 
-        return landcoord;
+        //===================================== Second cycle now with randomly generated state ===========================================//
+
+        url = 'https://corsproxy.io/?' + encodeURIComponent('https://api.3geonames.org/randomland.' + state + '.json');
+
+        response = await fetch(url);
+
+        // Check if the request was successful
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Parse the response to JSON
+        data = await response.json();
+
+        const landinfo = [data.major.latt, data.major.longt, data.major.city, data.major.prov];
+        
+        console.log('Land coordinates in state: ', landinfo);
+
+        return landinfo;
     } catch (error) {
         console.log('Error:', error);
     }
